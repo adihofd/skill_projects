@@ -1,0 +1,191 @@
+TOPIC 1 — INTRODUCTION
+Import
+import numpy as np
+
+Create arrays
+np.array([1,2,3])
+np.array([[1,2],[3,4]])
+
+TOPIC 2 — ARRAY CREATION FUNCTIONS
+Zeros, Ones, Full
+np.zeros((3,3))
+np.ones((2,2))
+np.full((3,3), 7)
+
+Range
+np.arange(0,10,2)
+np.linspace(0,1,5)
+
+Identity
+np.eye(3)
+
+Random
+np.random.randint(1,10,(3,3))
+np.random.rand(3,3)      # 0–1 floats
+np.random.randn(3,3)     # normal dist
+
+TOPIC 3 — ARRAY ATTRIBUTES
+a.shape
+a.ndim
+a.size
+a.dtype
+a.itemsize
+a.nbytes
+
+TOPIC 4 — INDEXING & SLICING
+Basic
+a[0]
+a[1:4]
+a[:,1]     # all rows, col 1
+a[0:2,1:3]
+
+Boolean indexing
+a[a > 5]
+
+Fancy indexing
+a[[0,2,4]]
+m[[0,2],[1,2]]  # picks (0,1) & (2,2)
+
+TOPIC 5 — VECTORIZED OPS & BROADCASTING
+Element-wise operations
+a + 5
+a * 2
+a ** 2
+np.sqrt(a)
+np.log(a)
+
+Broadcasting rule
+
+Match dims right-to-left OR one dimension = 1
+
+Examples:
+
+m + 10
+m + np.array([1,2,3])
+
+TOPIC 6 — MATH FUNCTIONS
+Aggregations
+a.sum()
+a.mean()
+a.std()
+a.var()
+a.min()
+a.max()
+a.argmax()
+a.argmin()
+
+Axis
+m.sum(axis=0)
+m.sum(axis=1)
+
+TOPIC 7 — ARRAY MANIPULATION
+Reshape
+a.reshape(2,3)
+np.reshape(a,(3,2))
+
+Flatten vs Ravel
+a.flatten()  # copy
+a.ravel()    # view
+
+Transpose
+m.T
+
+Stacking
+np.hstack([m,m])
+np.vstack([m,m])
+np.concatenate([a,b], axis=0)
+
+Splitting
+np.split(a,3)
+np.hsplit(m,3)
+np.vsplit(m,3)
+
+TOPIC 8 — RANDOM MODULE
+Integers
+np.random.randint(1,10,(3,3))
+
+Floats
+np.random.rand(2,4)
+np.random.randn(3,3)
+
+Sampling
+np.random.choice([1,2,3], size=5)
+
+Seed
+np.random.seed(42)
+
+Distributions
+np.random.uniform(5,10,5)
+np.random.normal(loc=50, scale=5, size=5)
+
+TOPIC 9 — LINEAR ALGEBRA
+Dot / Matmul
+np.dot(a,b)
+a @ b
+
+Determinant
+np.linalg.det(A)
+
+Inverse
+np.linalg.inv(A)
+
+Solve Ax = b
+np.linalg.solve(A,b)
+
+Eigenvalues
+vals, vecs = np.linalg.eig(A)
+
+TOPIC 10 — SORTING & SEARCHING
+Sort
+np.sort(a)
+np.sort(m, axis=0)  # columns
+np.sort(m, axis=1)  # rows
+
+Argsort
+np.argsort(a)
+
+Unique
+np.unique(a)
+np.unique(a, return_counts=True)
+
+searchsorted
+np.searchsorted(a, 6)
+
+TOPIC 11 — FILE I/O
+Save / Load
+np.save("file.npy", a)
+np.load("file.npy")
+
+Save multiple arrays
+np.savez("file.npz", a=a, b=b)
+data = np.load("file.npz")
+
+loadtxt
+np.loadtxt("file.txt", delimiter=",")
+
+genfromtxt
+np.genfromtxt("file.csv", delimiter=",")
+
+StringIO (simulate file)
+from io import StringIO
+np.loadtxt(StringIO("1 2\n3 4"))
+
+TOPIC 12 — ADVANCED NUMPY
+View vs Copy
+a[1:4]     # view
+a[1:4].copy()  # copy
+
+Ravel = view
+
+Flatten = copy
+
+a.ravel()      # view
+a.flatten()    # copy
+
+Strides
+a.strides
+
+Fancy indexing = copy
+a[[0,2,4]]
+
+np.clip(array, lower_bound, upper_bound)

@@ -1,0 +1,341 @@
+1. Pandas Basics
+What is Pandas?
+
+A Python library for handling:
+
+tabular data (CSV, Excel, SQL outputs)
+
+time series
+
+large datasets
+
+data cleaning & transformation
+
+feature engineering for ML
+
+Built on top of NumPy.
+
+2. Pandas Data Structures
+Series
+
+1-D labeled array
+
+Can store any data type
+
+Has an index
+
+Similar to a single column in Excel or a dictionary
+
+Example:
+
+s = pd.Series([10, 20, 30], index=['a','b','c'])
+
+
+Key operations:
+
+s['a']
+s + 5
+s.apply(lambda x: x*2)
+
+DataFrame
+
+2-D table of rows & columns
+
+Most important part of Pandas
+
+Create:
+
+df = pd.DataFrame({
+    'Name': ['A','B','C'],
+    'Age': [20, 25, 22]
+})
+
+
+Useful functions:
+
+df.head()
+df.tail()
+df.info()
+df.describe()
+df.shape
+df.columns
+df.dtypes
+
+3. Selecting Data
+loc (label-based)
+df.loc[row_label, column_label]
+
+
+Example:
+
+df.loc[2, 'Age']          # row index 2, column Age
+df.loc[0:3, ['Name','Age']]
+df.loc[df['Age']>25]
+
+iloc (integer position)
+df.iloc[row_index, column_index]
+
+
+Example:
+
+df.iloc[0:3, 1:3]
+df.iloc[[0,2,4]]
+
+Difference
+Feature	loc	iloc
+Type	labels	numeric positions
+Range end	inclusive	exclusive
+When used	custom indices	default indices
+
+Example:
+
+df.loc[1:3]      # includes index 3  
+df.iloc[1:3]     # excludes 3
+
+4. Filtering Rows
+
+Boolean filters:
+
+df[df['Age'] > 25]
+df[(df['Age'] > 20) & (df['City']=='Delhi')]
+df[df['City'].isin(['Delhi','Mumbai'])]
+
+
+Not condition:
+
+df[~df['City'].isin(['Delhi'])]
+
+5. Modifying Data
+
+Add column:
+
+df['Bonus'] = df['Salary'] * 0.1
+
+
+Update:
+
+df.loc[df['City']=='Delhi', 'Salary'] += 5000
+
+
+Drop:
+
+df.drop('City', axis=1)
+df.drop([0,1], axis=0)
+
+
+Rename:
+
+df.rename(columns={'Name': 'EmpName'})
+
+
+Change dtype:
+
+df['Age'] = df['Age'].astype(int)
+
+6. GroupBy (MOST IMPORTANT)
+
+Grouping lets you aggregate by categories.
+
+Basic sum
+df.groupby('City')['Sales'].sum()
+
+Multiple aggregations
+df.groupby('City').agg(
+    total_sales=('Sales','sum'),
+    avg_age=('Age','mean'),
+    max_sal=('Salary','max')
+)
+
+transform() — VERY IMPORTANT
+
+Broadcasts group results back to each row.
+
+Example:
+
+df['city_avg_salary'] = df.groupby('City')['Salary'].transform('mean')
+
+
+Every row gets its city’s average.
+
+7. Merge, Join, Concat
+Merge (SQL JOIN equivalent)
+pd.merge(df1, df2, on='ID', how='left')
+
+
+Types:
+
+left
+
+right
+
+inner
+
+outer
+
+Merge on multiple keys:
+
+pd.merge(df1, df2, on=['ID','City'])
+
+Concat
+
+Vertical:
+
+pd.concat([df1, df2], axis=0)
+
+
+Horizontal:
+
+pd.concat([df1, df2], axis=1)
+
+8. Missing Data
+
+Check:
+
+df.isnull().sum()
+
+
+Drop:
+
+df.dropna()
+df.dropna(how='all')
+
+
+Fill:
+
+df['Age'].fillna(df['Age'].median())
+df.fillna({'City':'Unknown'})
+
+
+Replace:
+
+df['Age'].replace(-1, None)
+
+9. Pivot Tables
+
+Pivot:
+
+df.pivot_table(values='Sales', index='City', aggfunc='sum')
+
+
+Pivot with columns:
+
+df.pivot_table(values='Sales', index='City', columns='Product', aggfunc='sum')
+
+
+Crosstab:
+
+pd.crosstab(df['City'], df['Product'])
+
+
+margins=True gives totals.
+
+10. Date & Time
+
+Convert:
+
+df['Date'] = pd.to_datetime(df['Date'])
+
+
+Extract:
+
+df['Year'] = df['Date'].dt.year
+df['Month'] = df['Date'].dt.month
+df['Day'] = df['Date'].dt.day
+df['Weekday'] = df['Date'].dt.day_name()
+
+
+Filter:
+
+df[df['Date'] > '2023-01-01']
+
+
+Resample (most important):
+
+df.set_index('Date').resample('ME').sum()
+
+11. MultiIndex
+
+Set:
+
+df.set_index(['City','Product'])
+
+
+Access:
+
+df.loc[('Delhi','A')]
+
+
+Unstack:
+
+df.unstack()
+
+
+Reset:
+
+df.reset_index()
+
+12. Window Functions
+Rolling
+df['MA_3'] = df['Sales'].rolling(3).mean()
+df['Sum_3'] = df['Sales'].rolling(3).sum()
+
+Expanding
+df['Exp_Mean'] = df['Sales'].expanding().mean()
+
+EWM (Exponential Weighted)
+
+Formula:
+
+EWM_t = α * x_t + (1-α) * EWM_(t-1)
+
+
+In code:
+
+df['EWM_03'] = df['Sales'].ewm(alpha=0.3).mean()
+
+13. Real-World Data Cleaning (MOST IMPORTANT)
+Clean column names
+df.columns = (
+    df.columns
+      .str.strip()
+      .str.lower()
+      .str.replace(' ', '_', regex=False)
+      .str.replace('$','', regex=False)
+)
+
+Clean text columns
+df['city'] = df['city'].str.strip().str.title()
+
+Handle invalid numbers
+df['amount'] = pd.to_numeric(df['amount'], errors='coerce')
+
+Fill missing values
+df.fillna({'city':'Unknown', 'amount':0}, inplace=True)
+
+Remove duplicates
+df.drop_duplicates(inplace=True)
+
+Fix data types
+df['age'] = df['age'].astype(int)
+df['date'] = pd.to_datetime(df['date'])
+
+14. File Handling
+
+Read:
+
+pd.read_csv('file.csv')
+pd.read_excel('file.xlsx')
+pd.read_json('file.json')
+
+
+Write:
+
+df.to_csv('out.csv', index=False)
+df.to_excel('out.xlsx', index=False)
+
+
+Read multiple files:
+
+import glob
+files = glob.glob("sales_*.csv")
+df = pd.concat([pd.read_csv(f) for f in files])
